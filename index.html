@@ -525,13 +525,13 @@ let _editLinks = []; // temp storage while editing a project's links
 let G = { token: '', gistId: '', syncing: false, lastSync: null, readOnly: false };
 
 function initGist() {
-  G.token  = localStorage.getItem('elc_gh_token') || '';
+  G.token  = localStorage.getItem('prj_gh_token') || '';
   const hash = window.location.hash;
   if (hash.startsWith('#gist=')) {
     G.gistId = hash.slice(6).split('&')[0];
-    if (G.gistId) localStorage.setItem('elc_gist_id', G.gistId);
+    if (G.gistId) localStorage.setItem('prj_gist_id', G.gistId);
   } else {
-    G.gistId = localStorage.getItem('elc_gist_id') || '';
+    G.gistId = localStorage.getItem('prj_gist_id') || '';
     if (G.gistId) history.replaceState(null, '', '#gist=' + G.gistId);
   }
   G.readOnly = !!G.gistId && !G.token;
@@ -624,14 +624,14 @@ async function completeSetup() {
   const token = (document.getElementById('setup-token').value || '').trim();
   if (!token) { toast('Please enter your GitHub token'); return; }
   G.token = token;
-  localStorage.setItem('elc_gh_token', token);
+  localStorage.setItem('prj_gh_token', token);
   const btn = document.getElementById('setup-btn');
   btn.textContent = 'Creating…'; btn.disabled = true;
   try {
     const id = await createGist();
     G.gistId   = id;
     G.readOnly = false;
-    localStorage.setItem('elc_gist_id', id);
+    localStorage.setItem('prj_gist_id', id);
     history.replaceState(null, '', '#gist=' + id);
     closeSetup();
     G.lastSync = new Date(); updateSyncUI();
@@ -662,7 +662,7 @@ function openSettings() {
   document.getElementById('settings-gh-status').textContent = G.token ? 'Token is set. Enter a new one above to replace it.' : 'No token set — sync is disabled.';
   document.getElementById('settings-client-id').value = S.googleClientId || '';
   document.getElementById('settings-allowlist').value = S.allowedEmails || '';
-  document.getElementById('settings-todoist').value = localStorage.getItem('elc_todoist_token') || '';
+  document.getElementById('settings-todoist').value = localStorage.getItem('prj_todoist_token') || '';
   document.getElementById('settingsModal').classList.add('open');
 }
 
@@ -678,12 +678,12 @@ async function saveSettings() {
   if (newToken) {
     G.token = newToken;
     G.readOnly = false;
-    localStorage.setItem('elc_gh_token', newToken);
+    localStorage.setItem('prj_gh_token', newToken);
   }
   S.googleClientId  = clientId;
   S.allowedEmails   = allowedEmails;
-  if (todoistToken) localStorage.setItem('elc_todoist_token', todoistToken);
-  else localStorage.removeItem('elc_todoist_token');
+  if (todoistToken) localStorage.setItem('prj_todoist_token', todoistToken);
+  else localStorage.removeItem('prj_todoist_token');
   save();
   closeSettings();
   updateSyncUI();
@@ -696,11 +696,11 @@ async function saveSettings() {
    ============================================================ */
 function checkStoredAuth() {
   try {
-    const raw = sessionStorage.getItem('elc_google_auth');
+    const raw = sessionStorage.getItem('prj_google_auth');
     if (!raw) return false;
     const auth = JSON.parse(raw);
     if (!auth.email || !auth.email.toLowerCase().endsWith(AUTH_DOMAIN)) return false;
-    if (!auth.exp || Date.now() > auth.exp) { sessionStorage.removeItem('elc_google_auth'); return false; }
+    if (!auth.exp || Date.now() > auth.exp) { sessionStorage.removeItem('prj_google_auth'); return false; }
     A.email = auth.email;
     A.name  = auth.name || '';
     A.valid = true;
@@ -782,7 +782,7 @@ function handleGoogleCredential(response) {
     A.name  = payload.name || '';
     A.valid = true;
     logAccess(email, A.name, 'granted');
-    sessionStorage.setItem('elc_google_auth', JSON.stringify({
+    sessionStorage.setItem('prj_google_auth', JSON.stringify({
       email, name: A.name,
       exp: Date.now() + 8 * 60 * 60 * 1000,
     }));
@@ -797,7 +797,7 @@ function handleGoogleCredential(response) {
    TODOIST
    ============================================================ */
 async function createTodoistTask(projectId) {
-  const token = localStorage.getItem('elc_todoist_token');
+  const token = localStorage.getItem('prj_todoist_token');
   if (!token) {
     toast('Add your Todoist token in Settings first');
     openSettings();
@@ -835,7 +835,7 @@ async function createTodoistTask(projectId) {
    PERSISTENCE
    ============================================================ */
 function save() {
-  localStorage.setItem('elc_v2', JSON.stringify({ projects: S.projects, nextId: S.nextId, googleClientId: S.googleClientId }));
+  localStorage.setItem('prj_v2', JSON.stringify({ projects: S.projects, nextId: S.nextId, googleClientId: S.googleClientId }));
   if (G.token && G.gistId) pushToGist();
 }
 
@@ -1389,19 +1389,19 @@ async function init() {
       S.nextId          = data.nextId || (Math.max(...data.projects.map(p => p.id)) + 1);
       S.googleClientId  = data.googleClientId || '';
       S.allowedEmails   = data.allowedEmails  || '';
-      localStorage.setItem('elc_v2', JSON.stringify({ projects: S.projects, nextId: S.nextId, googleClientId: S.googleClientId }));
+      localStorage.setItem('prj_v2', JSON.stringify({ projects: S.projects, nextId: S.nextId, googleClientId: S.googleClientId }));
       if (!G.readOnly) G.lastSync = new Date();
     } else {
       // Gist fetch failed — fall through to localStorage
       try {
-        const raw = localStorage.getItem('elc_v2');
+        const raw = localStorage.getItem('prj_v2');
         if (raw) { const d = JSON.parse(raw); S.projects = d.projects; S.nextId = d.nextId || 19; S.googleClientId = d.googleClientId || ''; S.allowedEmails = d.allowedEmails || ''; }
         else S.projects = JSON.parse(JSON.stringify(SEED));
       } catch { S.projects = JSON.parse(JSON.stringify(SEED)); }
     }
   } else {
     try {
-      const raw = localStorage.getItem('elc_v2');
+      const raw = localStorage.getItem('prj_v2');
       if (raw) { const d = JSON.parse(raw); S.projects = d.projects; S.nextId = d.nextId || 19; S.googleClientId = d.googleClientId || ''; S.allowedEmails = d.allowedEmails || ''; }
       else S.projects = JSON.parse(JSON.stringify(SEED));
     } catch { S.projects = JSON.parse(JSON.stringify(SEED)); }
