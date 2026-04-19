@@ -2,7 +2,7 @@
 
 A single-file HTML project management dashboard you can host for free on GitHub in about 10 minutes. No coding experience required for basic setup. No servers, no databases, no monthly fees.
 
-**[Live demo →](https://tr3v0r86.github.io/Special-Projects-Dashboard/)**
+**[Live demo →](https://tr3v0r86.github.io/projects-dashboard-template/)**
 
 ---
 
@@ -34,7 +34,7 @@ That's it. No software to install, no command line required for the basic setup.
 2. Click the **Fork** button at the top right of this page
 3. On the next screen, click **Create fork**
 
-You now have your own copy at `https://github.com/YOUR-USERNAME/Special-Projects-Dashboard`
+You now have your own copy at `https://github.com/YOUR-USERNAME/projects-dashboard-template`
 
 ---
 
@@ -49,7 +49,7 @@ GitHub Pages publishes your `index.html` file as a live website for free.
 
 After about 60 seconds, your dashboard will be live at:
 ```
-https://YOUR-USERNAME.github.io/Special-Projects-Dashboard/
+https://YOUR-USERNAME.github.io/projects-dashboard-template/
 ```
 
 GitHub will show you the exact URL once it's deployed — look for the green "Your site is live" banner on the Pages settings screen.
@@ -286,4 +286,4 @@ No build tools. No dependencies. No package.json. Just one file.
 
 ## Credits
 
-Built on the [Special Projects Dashboard](https://github.com/Tr3v0r86/Special-Projects-Dashboard) by Trevor Cardozo at ELC Group Bangkok. Adapted as an open template for anyone to use.
+Originally built as an internal tool and adapted as an open template for anyone to use.
