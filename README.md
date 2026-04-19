@@ -1,4 +1,4 @@
-# Special Projects Dashboard — Template
+# Project Management Dashboard — Template
 
 A single-file HTML project management dashboard you can host for free on GitHub in about 10 minutes. No coding experience required for basic setup. No servers, no databases, no monthly fees.
 
